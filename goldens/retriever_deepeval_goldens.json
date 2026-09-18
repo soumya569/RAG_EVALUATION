@@ -1,0 +1,92 @@
+[
+  {
+    "id": "g001",
+    "query": "Assess merits of 3NF vs flat schema for LLM query generation and error propagation.",
+    "ideal_answer": "**3NF (fully normalized)**  \n- **Pros:** eliminates redundancy, enforces data integrity, makes updates/inserts safe.  \n- **Cons for LLM‑generated SQL:** every query must traverse multiple tables, so the model has to produce correct `JOIN` syntax and maintain foreign‑key relationships. Each extra join is another point where a generation error can occur, which can amplify error propagation.\n\n**Flat (single‑table/denormalized) schema**  \n- **Pros for LLM query generation:** queries are simple — usually a single `SELECT` with no joins, so the model’s chance of syntactic or logical mistakes is lower. Faster prototyping and easier debugging.  \n- **Cons:** data duplication, update anomalies, and potential inconsistency across rows. The LLM may still mis‑reference columns, but the overall error rate tends to be lower because the query structure is simpler.\n\n**Bottom line:**  \n- If the priority is **data correctness and long‑term maintainability**, 3NF is preferable despite higher join complexity.  \n- If the priority is **quick, accurate LLM‑generated queries with minimal join‑related errors**, a denormalized (flat) schema is often more effective.  \n\nChoose based on whether you value strict normalization (integrity) or reduced query‑generation error risk (simplicity).",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g002",
+    "query": "How does the evaluator choose sorting vs ORDER BY based on golden query and affect row‑match?",
+    "ideal_answer": "The evaluator first looks at the **golden query** to see whether it contains an **ORDER BY** clause.  \n\n* **If the golden query has no ORDER BY** (order does **not** matter), the evaluator **sorts the result sets of both tables** before comparing them. This removes any row‑position differences that might arise from query variations, and the rows are then matched purely by content.  \n\n* **If the golden query includes an ORDER BY** (order **does** matter), the evaluator **does not sort** the tables. It compares the rows in the order they are returned. A match means the query under test correctly implements the required ordering; a mismatch means the ORDER BY clause is missing or incorrect.  \n\nThus, the presence of ORDER BY in the golden query determines whether the evaluator sorts the tables or relies on the original row order for the row‑match check.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g003",
+    "query": "Examine LLMEvales' role in benchmarking LLM robustness for enterprise-scale deployment.",
+    "ideal_answer": "LLMEvales are the systematic tools used to benchmark how robust a large language model (LLM) is before it’s deployed at enterprise scale. By defining clear evaluation criteria—accuracy, consistency, safety, latency, and handling of edge‑case inputs—LLMEvales let you:\n\n1. **Measure real‑world performance**: Simulate production workloads to see if the model maintains quality across millions of users.  \n2. **Identify failure modes**: Spot brittleness or bias that could cause costly errors when the model is exposed to diverse, high‑volume traffic.  \n3. **Guide production readiness**: Provide quantitative scores that inform whether the model can be safely moved from a personal‑project mindset to a production‑grade, “crore‑of‑people” deployment.  \n\nIn short, LLMEvales give you the evidence‑based confidence needed to transition an LLM from a prototype to a robust, enterprise‑ready service.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g004",
+    "query": "How do question generation and human labeling differ in building the golden dataset?",
+    "ideal_answer": "Question generation creates the list of user‑like queries (the 50–100 questions covering edge cases, easy and hard scenarios). Human labeling then takes each generated question and, using a human expert, searches the vector database to identify the single document that contains the correct answer. In short, generation produces the questions; labeling validates each question by assigning its true answer/document, forming the golden dataset.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g005",
+    "query": "Imagine an answer contradicts the retrieved passage; how would you evaluate its faithfulness?",
+    "ideal_answer": "To evaluate faithfulness, compare the answer directly against the retrieved passage. If the answer contains statements that contradict the passage, it is **not faithful**. You can flag it as unfaithful by:\n\n1. **Checking alignment** – verify that each claim in the answer is supported by the passage.  \n2. **Detecting contradictions** – any claim that opposes the passage indicates a breach of faithfulness.  \n\nSince faithfulness measures whether the answer is generated from the given context, a contradictory answer fails this criterion.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g006",
+    "query": "How does reliability of human‑based evaluation vs programmatic methods differ, and what cost trade‑offs?",
+    "ideal_answer": "Human‑based evaluation is generally more reliable—people’s judgment is trusted and can handle nuances that machines miss. The trade‑off is cost: hiring humans is expensive, especially at large scale, making it impractical for millions of users. Programmatic methods are cheaper and scalable but tend to be less reliable than human judgment.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g007",
+    "query": "Examine how high‑order numerical solvers drive multi‑physics optimization in HPC finance models.",
+    "ideal_answer": "High‑order numerical solvers are crucial in HPC finance because they deliver the precision needed to couple multiple physical models (e.g., stochastic market dynamics, risk‑factor PDEs, and Monte‑Carlo simulations) within a single optimization loop. Their superior accuracy reduces discretization error, which in turn speeds convergence of multi‑physics optimizers and yields more reliable portfolio‑valuation and risk‑management results.  \n\nTo exploit these solvers effectively, a finance application must:\n\n1. **Leverage strong mathematical capability** – as highlighted in the context, many benchmarks focus on a model’s ability to handle complex scientific‑computing tasks; high‑order methods are a prime example.  \n2. **Manage very large input data** – multi‑physics problems often generate hundreds of thousands of tokens (e.g., market histories, scenario grids). A model with a long‑context window can ingest and process this information without losing critical details.  \n3. **Extract key facts from the long context** – the optimizer must isolate the most relevant parameters (interest rates, volatility surfaces, etc.) from the massive input, a skill the context describes as essential for effective long‑context usage.\n\nIn short, high‑order solvers drive multi‑physics optimization in HPC finance by providing accurate, tightly‑coupled solutions while demanding robust mathematical handling and the ability to process extensive contextual data.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g008",
+    "query": "How does evaluator compare SQL and analyst query result sets via pandas DataFrames for match?",
+    "ideal_answer": "The evaluator works by executing **both** the model‑generated SQL and the analyst‑written SQL, loading each result into a pandas DataFrame (the “golden” reference and the “candidate”). It then normalises the frames—sorting rows, resetting indexes, aligning column order and data types, and treating NaNs consistently—before performing a direct comparison (e.g., `df1.equals(df2)` or an element‑wise `np.allclose` for numeric columns). If the two DataFrames are identical after this normalization, the evaluator marks the model’s query as a match; otherwise it flags a mismatch.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g009",
+    "query": "If you added a new retriever to your RAG system, how would multiple evaluations change?",
+    "ideal_answer": "Adding a new retriever means you’ll have to run several evaluations again:\n\n* **Retriever‑specific eval** – measure its relevance/recall to see how it compares with the previous retriever.  \n* **Embedding‑model eval** – unchanged, but you may re‑run it to confirm the embeddings still work well with the new retriever.  \n* **End‑to‑end RAG workflow eval** – test the whole pipeline (retriever + generator) to verify overall answer quality.  \n* **Latency eval** – measure any change in response time introduced by the new retriever.\n\nIn short, the addition triggers a fresh round of the multiple evaluations you already run (retriever, whole system, and latency) to ensure the new component improves performance without degrading other metrics.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g010",
+    "query": "Link LLM coding ability, $60 B valuation, and enterprise software development impact to illustrate economic value.",
+    "ideal_answer": "LLMs that can write and debug code create huge economic value. Their ability to perform software‑engineering tasks lets enterprises automate large portions of development, cutting time‑to‑market and labor costs. This capability is the primary driver behind the roughly **$60 billion valuation** of leading LLM providers—because the software‑development market is massive, and a model that can reliably code directly generates revenue for countless companies. In short, the coding skill of LLMs translates into a multi‑billion‑dollar economic impact by reshaping enterprise software development.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g011",
+    "query": "Should we evaluate the chatbot using the latest 20% of chats, maintaining statistical validity?",
+    "ideal_answer": "No. Using the most recent 20 % of chats introduces a selection bias and breaks the random‑sampling assumption that underpins statistical validity. Randomly drawing a representative subset (e.g., 1 000 out of 10 000) lets you estimate performance without over‑weighting any particular time slice. If you need to monitor drift, keep a separate “latest‑window” analysis, but the primary evaluation should remain a random sample to preserve unbiased, statistically sound results.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g012",
+    "query": "How does knowledge capability differ from parametric knowledge, and how are they measured in LLMs?",
+    "ideal_answer": "**Knowledge capability** is the overall ability of an LLM to retain and recall world information in its weights after training.  \n\n**Parametric knowledge** is not a separate property—it’s the *measurement* of that capability: a benchmark that probes how much factual knowledge is stored directly in the model’s parameters (i.e., its “parametric” memory).  \n\n**How they’re measured:**  \n- Researchers design **parametric‑knowledge benchmarks** (e.g., factual QA, entity recall, closed‑book tests).  \n- The LLM’s performance on these tests quantifies its **knowledge capability**—the higher the score, the more knowledge the model has encoded in its parameters.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g013",
+    "query": "Decode the 18 index derived via 4:1 token scaling and stepwise aggregation.",
+    "ideal_answer": "The “18” comes from the simple arithmetic that follows the 4 : 1 token‑scaling rule:\n\n1. **First step – 4 × 10** → 40  \n2. **Second step – (10 + 1) scaled to 50** → 50  \n3. **Add the two results** → 40 + 50 = 90  \n4. **Divide by the aggregation factor (5)** → 90 ÷ 5 = 18  \n\nSo the index 18 is the blended number you get when you apply the 4 : 1 input‑to‑output token ratio (400 tokens → 100 tokens) through the step‑wise aggregation described above. It’s the final “scaled‑down” value that represents the combined effect of those intermediate calculations.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g014",
+    "query": "If Campus X v1 answered all GSM‑8K prompts, how would you evaluate its performance?",
+    "ideal_answer": "To evaluate Campus X v1 after it has answered every GSM‑8K question, follow the benchmark‑driven loop described:\n\n1. **Run the benchmark** – feed each GSM‑8K prompt to Campus X v1 using the exact prompt format and settings prescribed by the benchmark.  \n2. **Collect responses** – store the model’s answer for every row (question) in the dataset.  \n3. **Compare to ground‑truth** – for each prompt, check whether the model’s answer matches the reference solution (exact match or within an acceptable tolerance for numeric answers).  \n4. **Compute metrics** – aggregate the per‑question results into standard scores such as:\n   - **Accuracy / Exact‑match rate** (percentage of correctly solved problems)  \n   - **Mean absolute error** or **relative error** for numeric answers, if the benchmark reports them  \n   - Any benchmark‑specific aggregate score (e.g., GSM‑8K overall score).  \n\n5. **Report** – present the overall accuracy (e.g., “Campus X v1 solved 87 % of GSM‑8K problems”) along with any secondary metrics, and compare it to baseline or prior models to gauge improvement.",
+    "source": "TODO-verify"
+  },
+  {
+    "id": "g015",
+    "query": "How do systematic LLM evals differ from ad‑hoc testing regarding repeatability and criteria?",
+    "ideal_answer": "Systematic LLM evals are built on well‑defined data sets and explicit scoring rules, so the same test can be run again and again with identical results — they are **repeatable** and have **clear criteria**. In contrast, ad‑hoc (or “vibe”) testing relies on a few spontaneously chosen questions, lacks a structured dataset, and has no formal benchmark, making it **non‑repeatable** and **criteria‑free**.",
+    "source": "TODO-verify"
+  }
+]
